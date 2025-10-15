@@ -21,7 +21,21 @@ template = """
 <h2>Pending Detections</h2>
 {% if detections %}
 <table><tr><th>Time</th><th>Tool</th><th>Summary</th><th>Action</th></tr>
-{% for i,d in enumerate(detections) %}
+{% for d in detections %}
+<tr>
+ <td>{{ d['t'] }}</td>
+ <td>{{ d['tool'] }}</td>
+ <td>{{ d['summary'] }}</td>
+ <td>
+  <form method="POST" action="/handle">
+    <input type="hidden" name="idx" value="{{ loop.index0 }}">
+    <input type="hidden" name="tool" value="{{ d['tool'] }}">
+    <button name="action" value="Safe" class="safe">Safe</button>
+    <button name="action" value="Prevent" class="prevent">Prevent</button>
+  </form>
+ </td>
+</tr>
+{% endfor %}
 <tr>
  <td>{{d['t']}}</td>
  <td>{{d['tool']}}</td>
@@ -108,3 +122,4 @@ def handle():
     return redirect("/")
 if __name__ == "__main__":
     APP.run(host="0.0.0.0", port=5000, debug=False)
+
